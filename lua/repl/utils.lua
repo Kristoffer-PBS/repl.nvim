@@ -18,36 +18,37 @@ M.get_visual_selection = function()
     return lines
 end
 
+-- stylua: ignore
 M.get_code_cell = function(delimiter)
-    local curr_lnum = vim.fn.line(".")
-
-    local start_lnum = 1
-    local end_lnum = vim.fn.line("$")
-    local commentstring = vim.bo.commentstring
+    local curr_lnum      = vim.fn.line(".")
+    local start_lnum     = 1
+    local end_lnum       = vim.fn.line("$")
+    local commentstring  = vim.bo.commentstring
     local cell_delimiter = string.format(commentstring, delimiter)
-    local use_start_of_buffer = false
-    local use_end_of_buffer = false
-
-
+    local curr_line      = vim.fn.getline(curr_lnum)
+    -- The edge case of the cursor being on a line with the cell delimiter
+    -- is handled by returning nil
+    if curr_line == cell_delimiter then
+        return nil
+    end
 
     for i = curr_lnum, start_lnum, -1 do
         local line = vim.fn.getline(i)
         if line == cell_delimiter then
-            if i == start_lnum then use_start_of_buffer = true end
-            start_lnum = i
-            break
-        end
-    end
-    for i = curr_lnum, end_lnum, 1 do
-        local line = vim.fn.getline(i)
-        if line == cell_delimiter then
-            if i == end_lnum then use_end_of_buffer = true end
-            end_lnum = i
+            start_lnum = i + 1
             break
         end
     end
 
-    local lines = vim.fn.getline(start_lnum + (use_start_of_buffer and 1 or 0), end_lnum - (use_end_of_buffer and 1 or 0))
+    for i = curr_lnum, end_lnum, 1 do
+        local line = vim.fn.getline(i)
+        if line == cell_delimiter then
+            end_lnum = i - 1
+            break
+        end
+    end
+
+    local lines = vim.fn.getline(start_lnum, end_lnum)
     return lines
 end
 

@@ -60,11 +60,16 @@ end
 M.send_code_cell = function()
     local terminal_job_id = get_terminal_job_id()
     local lines = require("repl.utils").get_code_cell(opts.cell_delimiter)
+    if not lines then
+        vim.cmd "echoerr 'Cursor is on a line with a code cell delimiter. No text to be send.'"
+        return
+    end
 	lines[#lines]         = lines[#lines] .. "\r"
 	fn.chansend(terminal_job_id, lines)
 end
 
 M.setup = function(_)
+    opts = vim.tbl_extend("force", DEFAULTS, opts)
     vim.cmd("command! -nargs=1 ReplOpen lua require('repl').start_repl_and_link_it_with_current_buffer(<f-args>)")
 end
 
