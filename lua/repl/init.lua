@@ -61,7 +61,7 @@ M.send_code_cell = function()
     local terminal_job_id = get_terminal_job_id()
     local lines = require("repl.utils").get_code_cell(opts.cell_delimiter)
     if not lines then
-        vim.cmd "echoerr 'Cursor is on a line with a code cell delimiter. No text to be send.'"
+        vim.cmd "echohl WarningMsg | echo 'Cursor is on a line with a code cell delimiter. No text to be send.' | echohl None"
         return
     end
 	lines[#lines]         = lines[#lines] .. "\r"
