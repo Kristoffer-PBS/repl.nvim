@@ -2,6 +2,10 @@ local fn = vim.fn
 
 local M = {}
 
+local DEFAULTS = {
+    cell_delimiter = " %% "
+}
+local opts = {}
 local bufnr_to_terminal_job_id_mapping = {}
 
 local get_terminal_job_id = function()
@@ -18,9 +22,10 @@ end
 -- stylua: ignore
 M.start_repl_and_link_it_with_current_buffer = function(repl)
 	local bufnr = fn.bufnr("%")
-    vim.cmd("command! -buffer ReplSendLineAtCursor    lua require('repl').send_line_at_cursor()")
+    vim.cmd("command! -buffer ReplSendLineAtCursor           lua require('repl').send_line_at_cursor()")
     vim.cmd("command! -buffer -range ReplSendVisualSelection lua require('repl').send_visual_selection()")
-    vim.cmd("command! -buffer ReplSendEntireBuffer    lua require('repl').send_entire_buffer()")
+    vim.cmd("command! -buffer ReplSendEntireBuffer           lua require('repl').send_entire_buffer()")
+    vim.cmd("command! -buffer ReplSendCodeCell               lua require('repl').send_code_cell()")
 
 	vim.cmd("vsplit | terminal " .. repl)
 	local terminal_job_id = vim.b.terminal_job_id
@@ -52,7 +57,14 @@ M.send_entire_buffer = function()
     fn.chansend(terminal_job_id, lines)
 end
 
-M.setup = function(opts)
+M.send_code_cell = function()
+    local terminal_job_id = get_terminal_job_id()
+    local lines = require("repl.utils").get_code_cell(opts.cell_delimiter)
+	lines[#lines]         = lines[#lines] .. "\r"
+	fn.chansend(terminal_job_id, lines)
+end
+
+M.setup = function(_)
     vim.cmd("command! -nargs=1 ReplOpen lua require('repl').start_repl_and_link_it_with_current_buffer(<f-args>)")
 end
 
