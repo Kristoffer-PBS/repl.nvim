@@ -37,7 +37,7 @@ end
 -- stylua: ignore
 M.send_visual_selection = function()
 	local terminal_job_id = get_terminal_job_id()
-	local lines           = require("utils").get_visual_selection()
+	local lines           = require("repl.utils").get_visual_selection()
 	lines[#lines]         = lines[#lines] .. "\r"
 	fn.chansend(terminal_job_id, lines)
 end
