@@ -15,17 +15,19 @@ end
 
 ---
 ---@param repl string
+-- stylua: ignore
 M.start_repl_and_link_it_with_current_buffer = function(repl)
 	local bufnr = fn.bufnr("%")
+    vim.cmd("command! -buffer ReplSendLineAtCursor    lua require('repl').send_line_at_cursor()")
+    vim.cmd("command! -buffer ReplSendVisualSelection lua require('repl').send_visual_selection()")
+    vim.cmd("command! -buffer ReplSendEntireBuffer    lua require('repl').send_entire_buffer()")
+
 	vim.cmd("vsplit | terminal " .. repl)
 	local terminal_job_id = vim.b.terminal_job_id
 	if not terminal_job_id then
 		error("terminal_job_id is nil")
 	end
 	bufnr_to_terminal_job_id_mapping[tostring(bufnr)] = terminal_job_id
-    vim.cmd("command! -buffer ReplSendLineAtCursor    lua require('repl').send_line_at_cursor()")
-    vim.cmd("command! -buffer ReplSendVisualSelection lua require('repl').send_visual_selection()")
-    vim.cmd("command! -buffer ReplSendEntireBuffer    lua require('repl').send_entire_buffer()")
 end
 
 M.send_line_at_cursor = function()
