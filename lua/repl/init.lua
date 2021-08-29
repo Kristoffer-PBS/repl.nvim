@@ -53,7 +53,7 @@ M.send_entire_buffer = function()
 end
 
 M.setup = function(opts)
-    vim.cmd("command! -nargs=1 ReplStart lua require('repl').start_repl_and_link_it_with_current_buffer(<f-args>)")
+    vim.cmd("command! -nargs=1 ReplOpen lua require('repl').start_repl_and_link_it_with_current_buffer(<f-args>)")
 end
 
 return M
