@@ -19,7 +19,7 @@ end
 M.start_repl_and_link_it_with_current_buffer = function(repl)
 	local bufnr = fn.bufnr("%")
     vim.cmd("command! -buffer ReplSendLineAtCursor    lua require('repl').send_line_at_cursor()")
-    vim.cmd("command! -buffer ReplSendVisualSelection lua require('repl').send_visual_selection()")
+    vim.cmd("command! -buffer -range ReplSendVisualSelection lua require('repl').send_visual_selection()")
     vim.cmd("command! -buffer ReplSendEntireBuffer    lua require('repl').send_entire_buffer()")
 
 	vim.cmd("vsplit | terminal " .. repl)
